@@ -867,7 +867,89 @@ body {
 }
 
 .text-warning {
-    color: var(--color-warning);
+}
+
+/* Custom Heap Input Styles */
+.custom-heap-inputs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-field-wrapper {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    transition: all 0.25s ease;
+}
+
+.input-field-wrapper:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 8px var(--color-primary-glow);
+}
+
+.input-prefix {
+    font-family: var(--font-header);
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--color-primary);
+    margin-right: 0.4rem;
+    user-select: none;
+}
+
+.input-field-wrapper input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    width: 100%;
+    font-family: var(--font-header);
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: right;
+}
+
+/* Hide Spin Buttons */
+.input-field-wrapper input::-webkit-inner-spin-button,
+.input-field-wrapper input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-field-wrapper input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.input-field-wrapper input:disabled {
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+}
+
+/* Secondary Action Button (Custom Start) */
+.btn-secondary-action {
+    background: rgba(255, 0, 127, 0.06);
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+    box-shadow: 0 4px 12px rgba(255, 0, 127, 0.15);
+}
+
+.btn-secondary-action:hover:not(:disabled) {
+    background: rgba(255, 0, 127, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 0, 127, 0.3);
+}
+
+.btn-secondary-action:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-secondary-action:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Helpers */

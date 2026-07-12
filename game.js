@@ -9,7 +9,8 @@ let selectedSubtraction = null;
 // DOM Elements
 const primeSelector = document.getElementById('prime-selector');
 const turnSelector = document.getElementById('turn-selector');
-const btnStart = document.getElementById('btn-start');
+const btnStartRandom = document.getElementById('btn-start-random');
+const btnStartCustom = document.getElementById('btn-start-custom');
 const btnRestart = document.getElementById('btn-restart');
 const btnRules = document.getElementById('btn-rules');
 const rulesModal = document.getElementById('rules-modal');
@@ -28,6 +29,9 @@ const btnHint = document.getElementById('btn-hint');
 const hintModal = document.getElementById('hint-modal');
 const btnCloseHint = document.getElementById('btn-close-hint');
 const hintModalBody = document.getElementById('hint-modal-body');
+const inputH1 = document.getElementById('input-h1');
+const inputH2 = document.getElementById('input-h2');
+const inputH3 = document.getElementById('input-h3');
 
 // --- Initialization & Event Listeners ---
 
@@ -55,7 +59,8 @@ turnSelector.addEventListener('click', (e) => {
 });
 
 // Game Action Buttons
-btnStart.addEventListener('click', startNewGame);
+btnStartRandom.addEventListener('click', () => startNewGame(false));
+btnStartCustom.addEventListener('click', () => startNewGame(true));
 btnRestart.addEventListener('click', restartGame);
 
 // Rules Modal Events
@@ -159,9 +164,39 @@ function getLegalSubtractions(h, m) {
 }
 
 // Start Game
-function startNewGame() {
+function startNewGame(isCustom = false) {
+    if (isCustom) {
+        const h1 = parseInt(inputH1.value);
+        const h2 = parseInt(inputH2.value);
+        const h3 = parseInt(inputH3.value);
+        
+        if (isNaN(h1) || isNaN(h2) || isNaN(h3)) {
+            alert('Please enter valid numbers for all heaps.');
+            logMessage('Start failed: Invalid custom heap values (NaN).', 'system');
+            return;
+        }
+        if (h1 < 1 || h1 > 31 || h2 < 1 || h2 > 31 || h3 < 1 || h3 > 31) {
+            alert('Custom heap sizes must be between 1 and 31.');
+            logMessage('Start failed: Custom sizes out of range [1, 31].', 'system');
+            return;
+        }
+        if (h1 % primeModulus === 0 || h2 % primeModulus === 0 || h3 % primeModulus === 0) {
+            alert(`Custom heap sizes cannot be divisible by the prime modulus m = ${primeModulus}.`);
+            logMessage(`Start failed: Custom heap size is divisible by m = ${primeModulus}.`, 'system');
+            return;
+        }
+        
+        heaps = [h1, h2, h3];
+    } else {
+        heaps = generateHeaps(primeModulus);
+    }
+
     gameState = 'playing';
-    btnStart.disabled = true;
+    btnStartRandom.disabled = true;
+    btnStartCustom.disabled = true;
+    inputH1.disabled = true;
+    inputH2.disabled = true;
+    inputH3.disabled = true;
     btnRestart.disabled = false;
     
     // Disable setup UI options
@@ -172,8 +207,7 @@ function startNewGame() {
         if (!btn.classList.contains('active')) btn.style.opacity = 0.5;
     });
 
-    heaps = generateHeaps(primeModulus);
-    logMessage(`New game started with prime modulus m = ${primeModulus}.`, 'system');
+    logMessage(`New game started with prime modulus m = ${primeModulus} (${isCustom ? 'Custom Setup' : 'Random Setup'}).`, 'system');
     logMessage(`Initial heaps: [${heaps.join(', ')}]`, 'system');
     
     deselectHeap();
@@ -192,7 +226,11 @@ function restartGame() {
     selectedSubtraction = null;
     
     // Re-enable settings
-    btnStart.disabled = false;
+    btnStartRandom.disabled = false;
+    btnStartCustom.disabled = false;
+    inputH1.disabled = false;
+    inputH2.disabled = false;
+    inputH3.disabled = false;
     btnRestart.disabled = true;
     btnHint.disabled = true;
     
