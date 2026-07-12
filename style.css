@@ -806,8 +806,8 @@ body {
 
 /* Custom heavier chip/pebble styles for Column 2 and Column 3 (Colors inherit level-specific styles) */
 .stone.col-unit-32 {
-    width: 14px !important;
-    height: 14px !important;
+    width: 18px !important;
+    height: 18px !important;
 }
 
 .stone.col-unit-32.empty {
@@ -815,12 +815,35 @@ body {
 }
 
 .stone.col-unit-512 {
-    width: 18px !important;
-    height: 18px !important;
+    width: 25px !important;
+    height: 25px !important;
 }
 
 .stone.col-unit-512.empty {
     border: 1.5px dashed rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Dynamic shelf size expansion for larger chips */
+.visual-column[data-col="2"] .shelf-stones {
+    min-height: 20px !important;
+    gap: 3px !important;
+}
+
+.visual-column[data-col="2"] .shelf-line {
+    height: 2.5px !important;
+}
+
+.visual-column[data-col="3"] .shelf-stones {
+    min-height: 28px !important;
+    gap: 4px !important;
+}
+
+.visual-column[data-col="3"] .shelf-line {
+    height: 3.5px !important;
+}
+
+.visual-column[data-col="3"] .shelf-row {
+    margin-bottom: 6px !important;
 }
 
 /* Interaction control panel */
