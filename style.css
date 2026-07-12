@@ -767,7 +767,7 @@ body {
 /* Consolidated Heap Visual Columns */
 .consolidated-heap-card {
     width: 100% !important;
-    max-width: 660px !important;
+    max-width: 100% !important;
     height: 380px !important;
     display: flex;
     flex-direction: column;
@@ -804,7 +804,7 @@ body {
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
 }
 
-/* Custom heavier chip/pebble styles for Column 2 and Column 3 */
+/* Custom heavier chip/pebble styles for Column 2 and Column 3 (Colors inherit level-specific styles) */
 .stone.col-unit-32 {
     width: 14px !important;
     height: 14px !important;
@@ -814,12 +814,6 @@ body {
     border: 1.5px dashed rgba(255, 255, 255, 0.15) !important;
 }
 
-/* col-unit-32 active is hot pink/magenta */
-.stone.col-unit-32.filled {
-    background: radial-gradient(circle at 35% 35%, #ffe6f2, #ff007f 60%, #b3004f) !important;
-    box-shadow: 0 0 8px rgba(255, 0, 127, 0.5), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
-}
-
 .stone.col-unit-512 {
     width: 18px !important;
     height: 18px !important;
@@ -827,20 +821,6 @@ body {
 
 .stone.col-unit-512.empty {
     border: 1.5px dashed rgba(255, 255, 255, 0.15) !important;
-}
-
-/* col-unit-512 active is glowing ice cyan */
-.stone.col-unit-512.filled {
-    background: radial-gradient(circle at 35% 35%, #e0ffff, #00f2fe 60%, #0072ff) !important;
-    box-shadow: 0 0 10px rgba(0, 242, 254, 0.6), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
-}
-
-.heap-card.selected .stone.col-unit-32.filled {
-    box-shadow: 0 0 12px #ff007f, 0 1px 1px rgba(0, 0, 0, 0.6) !important;
-}
-
-.heap-card.selected .stone.col-unit-512.filled {
-    box-shadow: 0 0 15px #00f2fe, 0 1px 1px rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Interaction control panel */

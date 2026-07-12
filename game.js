@@ -319,17 +319,17 @@ function renderBoard() {
                 <div class="heap-size">${h}</div>
             </div>
             <div class="consolidated-visual-grid">
-                <div class="visual-column" data-col="3">
-                    <div class="column-header">Col 3 (Unit 512)</div>
-                    <div class="heap-visual-container">${col3Html}</div>
+                <div class="visual-column" data-col="1">
+                    <div class="column-header">Col 1 (Unit 1)</div>
+                    <div class="heap-visual-container">${col1Html}</div>
                 </div>
                 <div class="visual-column" data-col="2">
                     <div class="column-header">Col 2 (Unit 32)</div>
                     <div class="heap-visual-container">${col2Html}</div>
                 </div>
-                <div class="visual-column" data-col="1">
-                    <div class="column-header">Col 1 (Unit 1)</div>
-                    <div class="heap-visual-container">${col1Html}</div>
+                <div class="visual-column" data-col="3">
+                    <div class="column-header">Col 3 (Unit 512)</div>
+                    <div class="heap-visual-container">${col3Html}</div>
                 </div>
             </div>
         `;
