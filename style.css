@@ -431,8 +431,8 @@ body {
     background: rgba(255, 255, 255, 0.02);
     border: 2px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
-    width: 255px;
-    height: 330px;
+    width: 300px;
+    height: 380px;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -532,17 +532,17 @@ body {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 2px;
-    min-height: 12px;
+    gap: 3px;
+    min-height: 16px;
     margin-bottom: 2px;
     width: 100%;
 }
 
 .shelf-line {
     width: var(--shelf-width, 100%);
-    height: 2px;
+    height: 3px;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 1px;
+    border-radius: 1.5px;
     transition: all 0.3s ease;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
@@ -555,8 +555,8 @@ body {
 .shelf-row[data-level="4"] .shelf-line { --shelf-width: 90%; }
 
 .stone {
-    width: 8px;
-    height: 8px;
+    width: 11px;
+    height: 11px;
     border-radius: 50%;
     transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     animation: stoneAppear 0.25s ease-out;
@@ -564,7 +564,7 @@ body {
 
 /* Empty Slots Style */
 .stone.empty {
-    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border: 1.5px dashed rgba(255, 255, 255, 0.15);
     background: rgba(0, 0, 0, 0.25);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.6);
 }
