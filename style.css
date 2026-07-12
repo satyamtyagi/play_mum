@@ -788,6 +788,10 @@ body {
     letter-spacing: 2px;
 }
 
+.text-warning {
+    color: var(--color-warning);
+}
+
 /* Helpers */
 .hidden {
     display: none !important;

@@ -89,6 +89,7 @@
                         <h2 class="panel-title"><i class="fa-solid fa-gamepad"></i> Game Board</h2>
                         <div class="game-actions">
                             <button id="btn-restart" class="btn-secondary" disabled><i class="fa-solid fa-rotate-right"></i> Restart</button>
+                            <button id="btn-hint" class="btn-secondary" disabled><i class="fa-solid fa-lightbulb"></i> Hint</button>
                             <button id="btn-rules" class="btn-secondary"><i class="fa-solid fa-book-open"></i> Rules</button>
                         </div>
                     </div>
@@ -128,7 +129,7 @@
             <div class="modal-body">
                 <h3>Game Elements</h3>
                 <ul>
-                    <li>The game is played with a prime modulus <span class="math-symbol">m</span> and <strong>2 to 5 heaps</strong>.</li>
+                    <li>The game is played with a prime modulus <span class="math-symbol">m</span> and <strong>exactly 3 heaps</strong>.</li>
                     <li>No heap size can ever be divisible by <span class="math-symbol">m</span>.</li>
                 </ul>
 
@@ -158,6 +159,19 @@
                     <li>If <span class="math-symbol">P<sub>mod</sub> &equiv; 1 (mod m)</span>, the position is <strong>losing (P-position)</strong>. Any move you make will leave a winning position for the opponent.</li>
                     <li>If <span class="math-symbol">P<sub>mod</sub> &ne; 1 (mod m)</span>, the position is <strong>winning (N-position)</strong>. There is always a legal move that forces <span class="math-symbol">P<sub>mod</sub> &equiv; 1 (mod m)</span>, putting the opponent in a losing position!</li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hint Modal -->
+    <div class="modal-overlay hidden" id="hint-modal">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-lightbulb text-warning"></i> AI Move Recommendation</h2>
+                <button class="modal-close" id="btn-close-hint"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="hint-modal-body">
+                <!-- Dynamically populated via JS -->
             </div>
         </div>
     </div>

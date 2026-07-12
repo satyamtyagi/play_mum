@@ -24,6 +24,10 @@ const selectedHeapNumSpan = document.getElementById('selected-heap-num');
 const subtractionChoicesDiv = document.getElementById('subtraction-choices');
 const btnConfirmMove = document.getElementById('btn-confirm-move');
 const btnCancelMove = document.getElementById('btn-cancel-move');
+const btnHint = document.getElementById('btn-hint');
+const hintModal = document.getElementById('hint-modal');
+const btnCloseHint = document.getElementById('btn-close-hint');
+const hintModalBody = document.getElementById('hint-modal-body');
 
 // --- Initialization & Event Listeners ---
 
@@ -65,6 +69,13 @@ rulesModal.addEventListener('click', (e) => {
 btnCancelMove.addEventListener('click', deselectHeap);
 btnConfirmMove.addEventListener('click', executePlayerMove);
 
+// Hint Modal Events
+btnHint.addEventListener('click', showHint);
+btnCloseHint.addEventListener('click', () => hintModal.classList.add('hidden'));
+hintModal.addEventListener('click', (e) => {
+    if (e.target === hintModal) hintModal.classList.add('hidden');
+});
+
 // --- Game Logic Functions ---
 
 // Calculate modular inverse: finding x in (a * x) % m === 1
@@ -103,7 +114,7 @@ function logMessage(text, type = 'system') {
 // - no size divisible by m
 // - at least two heaps > m
 function generateHeaps(m) {
-    const numHeaps = Math.floor(Math.random() * 4) + 2; // 2 to 5 heaps
+    const numHeaps = 3; // Exactly 3 heaps
     let newHeaps = [];
     
     // Generate at least two heaps > m
@@ -183,6 +194,7 @@ function restartGame() {
     // Re-enable settings
     btnStart.disabled = false;
     btnRestart.disabled = true;
+    btnHint.disabled = true;
     
     primeSelector.querySelectorAll('.btn-prime').forEach(btn => {
         btn.style.opacity = 1;
@@ -319,6 +331,13 @@ function updateUI() {
         turnDisplay.innerHTML = `<span style="color: var(--color-primary); text-shadow: 0 0 8px var(--color-primary-glow);"><i class="fa-solid fa-user"></i> Player's Turn</span>`;
     } else {
         turnDisplay.innerHTML = `<span style="color: var(--color-secondary); text-shadow: 0 0 8px var(--color-secondary-glow);"><i class="fa-solid fa-microchip"></i> AI Thinking...</span>`;
+    }
+
+    // Toggle Hint Button
+    if (gameState === 'playing' && currentTurn === 'player') {
+        btnHint.disabled = false;
+    } else {
+        btnHint.disabled = true;
     }
 }
 
@@ -469,3 +488,112 @@ function runAIMove() {
 // Write initial logs on startup
 logMessage('Welcome to MuM: Multiplicative Modulo Nim!', 'system');
 logMessage('Select a prime modulus m and click Start to begin.', 'system');
+
+// Show Hint Modal for the Player
+function showHint() {
+    if (gameState !== 'playing' || currentTurn !== 'player') return;
+    
+    const P = calculateInvariant(heaps, primeModulus);
+    let htmlContent = '';
+    
+    htmlContent += `
+        <div style="margin-bottom: 1.5rem;">
+            <p><strong>Current Invariant calculation:</strong></p>
+            <div class="formula-box">
+                P<sub>mod</sub> = &prod; h<sub>i</sub> (mod m)<br>
+                P<sub>mod</sub> = ${heaps.join(' &times; ')} &equiv; ${heaps.reduce((p,h)=>p*h, 1)} &equiv; <strong>${P}</strong> (mod ${primeModulus})
+            </div>
+        </div>
+    `;
+    
+    if (P === 1) {
+        // Losing Position
+        htmlContent += `
+            <div style="border-left: 4px solid var(--color-secondary); padding-left: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--color-secondary); margin-bottom: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> Losing Position (P-Position)</h3>
+                <p>Because the multiplicative invariant <strong>P<sub>mod</sub> &equiv; 1 (mod ${primeModulus})</strong>, you are in a mathematically losing position.</p>
+                <p>Under optimal play, any legal move you make will change the invariant to a value other than 1, allowing the AI to win on its next turn.</p>
+                <p><strong>Strategy:</strong> Play a normal move and hope the AI makes an error. You can choose any of your legal moves (e.g. from the subtraction menu on your interactive heaps).</p>
+            </div>
+        `;
+    } else {
+        // Winning Position
+        htmlContent += `
+            <div style="border-left: 4px solid var(--color-success); padding-left: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--color-success); margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i> Winning Position (N-Position)</h3>
+                <p>Because the multiplicative invariant <strong>P<sub>mod</sub> &equiv; ${P} &ne; 1 (mod ${primeModulus})</strong>, you are in a winning position!</p>
+                <p>There is at least one winning move that can force the invariant <strong>P<sub>mod</sub> &equiv; 1 (mod ${primeModulus})</strong> for the AI's turn.</p>
+            </div>
+        `;
+        
+        let winningMoves = [];
+        
+        for (let i = 0; i < heaps.length; i++) {
+            const h = heaps[i];
+            if (h <= 1) continue;
+            
+            // Calculate product of other heaps
+            let P_other = 1;
+            let otherHeapsStr = [];
+            for (let j = 0; j < heaps.length; j++) {
+                if (i !== j) {
+                    P_other = (P_other * (heaps[j] % primeModulus)) % primeModulus;
+                    otherHeapsStr.push(heaps[j]);
+                }
+            }
+            
+            const targetMod = modInverse(P_other, primeModulus);
+            
+            let r_0 = (h - targetMod) % primeModulus;
+            if (r_0 <= 0) r_0 += primeModulus;
+            
+            if (r_0 < h) {
+                winningMoves.push({
+                    heapIndex: i,
+                    r: r_0,
+                    h: h,
+                    P_other: P_other,
+                    otherHeapsStr: otherHeapsStr.join(' &times; '),
+                    targetMod: targetMod,
+                    newSize: h - r_0
+                });
+            }
+        }
+        
+        if (winningMoves.length > 0) {
+            htmlContent += `<p><strong>Recommended Winning Move(s):</strong></p>`;
+            winningMoves.forEach(move => {
+                htmlContent += `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 1rem; margin-top: 0.75rem;">
+                        <h4 style="color: var(--color-primary); font-family: var(--font-header); font-size: 0.95rem; margin-bottom: 0.5rem;">
+                            👉 Reduce Heap ${move.heapIndex + 1} by ${move.r} (Size ${move.h} &rarr; ${move.newSize})
+                        </h4>
+                        <div style="font-size: 0.85rem; line-height: 1.5; color: var(--color-text-muted);">
+                            <p><strong>Step-by-step Math:</strong></p>
+                            <ol style="margin-left: 1.2rem; margin-top: 0.25rem;">
+                                <li>Product of all other heaps: <strong>P<sub>-${move.heapIndex + 1}</sub> = ${move.otherHeapsStr} &equiv; ${move.P_other} (mod ${primeModulus})</strong>.</li>
+                                <li>To make the total product 1, we want the new size of Heap ${move.heapIndex + 1} (let's call it h'<sub>${move.heapIndex + 1}</sub>) to satisfy:<br>
+                                    <span style="font-family: monospace; color: var(--color-text);">h'<sub>${move.heapIndex + 1}</sub> &times; P<sub>-${move.heapIndex + 1}</sub> &equiv; 1 (mod ${primeModulus})</span> &rArr; 
+                                    <span style="font-family: monospace; color: var(--color-text);">h'<sub>${move.heapIndex + 1}</sub> &times; ${move.P_other} &equiv; 1 (mod ${primeModulus})</span>.
+                                </li>
+                                <li>The modular inverse of ${move.P_other} mod ${primeModulus} is <strong>${move.targetMod}</strong> (since ${move.P_other} &times; ${move.targetMod} = ${move.P_other * move.targetMod} &equiv; 1 mod ${primeModulus}). So we want <span style="font-family: monospace; color: var(--color-text);">h'<sub>${move.heapIndex + 1}</sub> &equiv; ${move.targetMod} (mod ${primeModulus})</span>.</li>
+                                <li>Subtracting <strong>r = ${move.r}</strong> gives a new size of <strong>h'<sub>${move.heapIndex + 1}</sub> = ${move.newSize}</strong>, which is:
+                                    <ul style="margin-left: 1.2rem; margin-top: 0.15rem;">
+                                        <li>Not divisible by ${primeModulus} (${move.newSize} &equiv; ${move.targetMod} &not;&equiv; 0 mod ${primeModulus}).</li>
+                                        <li>Satisfies the subtraction bound: 1 &le; ${move.r} &lt; ${primeModulus}.</li>
+                                        <li>Leaves the new total invariant product: <span style="font-family: monospace; color: var(--color-text);">${move.newSize} &times; ${move.P_other} = ${move.newSize * move.P_other} &equiv; <strong>1 (mod ${primeModulus})</strong></span>.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            htmlContent += `<p style="color: var(--color-secondary);">No legal winning moves found.</p>`;
+        }
+    }
+    
+    hintModalBody.innerHTML = htmlContent;
+    hintModal.classList.remove('hidden');
+}
