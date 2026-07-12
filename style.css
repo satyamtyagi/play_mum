@@ -172,6 +172,15 @@ body {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
+.header-stat-formula {
+    font-size: 0.68rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+    font-family: var(--font-body);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
 /* Game Layout */
 .game-layout {
     display: grid;

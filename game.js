@@ -247,6 +247,10 @@ function restartGame() {
     invariantDisplay.textContent = '--';
     positionStateDisplay.textContent = '--';
     positionStateDisplay.className = 'stat-value state-badge';
+    const formulaDisplay = document.getElementById('invariant-formula-display');
+    if (formulaDisplay) {
+        formulaDisplay.innerHTML = 'P<sub>mod</sub> = &prod; h<sub>i</sub> (mod m)';
+    }
     
     movePanel.classList.add('hidden');
     
@@ -368,6 +372,20 @@ function updateUI() {
     // Update Invariant Display
     const P = calculateInvariant(heaps, primeModulus);
     invariantDisplay.textContent = P;
+    
+    const formulaDisplay = document.getElementById('invariant-formula-display');
+    if (formulaDisplay) {
+        if (heaps.length > 0) {
+            const product = heaps.reduce((prod, h) => prod * h, 1);
+            if (heaps.length > 1) {
+                formulaDisplay.innerHTML = `${heaps.join(' &times; ')} &equiv; ${product} &equiv; <strong>${P}</strong> (mod ${primeModulus})`;
+            } else {
+                formulaDisplay.innerHTML = `${heaps[0]} &equiv; <strong>${P}</strong> (mod ${primeModulus})`;
+            }
+        } else {
+            formulaDisplay.innerHTML = 'P<sub>mod</sub> = &prod; h<sub>i</sub> (mod m)';
+        }
+    }
     
     // Update Winning/Losing indicator
     const isLosing = (P === 1);
