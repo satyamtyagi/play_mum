@@ -764,6 +764,85 @@ body {
     }
 }
 
+/* Consolidated Heap Visual Columns */
+.consolidated-heap-card {
+    width: 100% !important;
+    max-width: 660px !important;
+    height: 380px !important;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem !important;
+}
+
+.consolidated-visual-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 100%;
+    flex-grow: 1;
+    margin-top: 0.5rem;
+}
+
+.visual-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 0.5rem 0.25rem;
+}
+
+.column-header {
+    font-family: var(--font-header);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
+}
+
+/* Custom heavier chip/pebble styles for Column 2 and Column 3 */
+.stone.col-unit-32 {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.stone.col-unit-32.empty {
+    border: 1.5px dashed rgba(255, 255, 255, 0.15) !important;
+}
+
+/* col-unit-32 active is hot pink/magenta */
+.stone.col-unit-32.filled {
+    background: radial-gradient(circle at 35% 35%, #ffe6f2, #ff007f 60%, #b3004f) !important;
+    box-shadow: 0 0 8px rgba(255, 0, 127, 0.5), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
+}
+
+.stone.col-unit-512 {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+.stone.col-unit-512.empty {
+    border: 1.5px dashed rgba(255, 255, 255, 0.15) !important;
+}
+
+/* col-unit-512 active is glowing ice cyan */
+.stone.col-unit-512.filled {
+    background: radial-gradient(circle at 35% 35%, #e0ffff, #00f2fe 60%, #0072ff) !important;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.6), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
+}
+
+.heap-card.selected .stone.col-unit-32.filled {
+    box-shadow: 0 0 12px #ff007f, 0 1px 1px rgba(0, 0, 0, 0.6) !important;
+}
+
+.heap-card.selected .stone.col-unit-512.filled {
+    box-shadow: 0 0 15px #00f2fe, 0 1px 1px rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Interaction control panel */
 .interaction-control-panel {
     background: rgba(0, 0, 0, 0.4);

@@ -264,67 +264,123 @@ function restartGame() {
     logMessage('Game reset. You can adjust setup settings and start again.', 'system');
 }
 
+// Helper to build a column of shelves for binary representation
+function buildColumnHtml(h, startBit, numLevels, baseUnit) {
+    let shelvesHtml = '';
+    for (let j = 0; j < numLevels; j++) {
+        const k = startBit + j;
+        const bitValue = Math.pow(2, k);
+        const isActive = (h & bitValue) > 0;
+        const capacity = Math.pow(2, j);
+        
+        let stonesHtml = '';
+        for (let s = 0; s < capacity; s++) {
+            stonesHtml += `<div class="stone col-unit-${baseUnit} ${isActive ? 'filled' : 'empty'}"></div>`;
+        }
+        
+        shelvesHtml += `
+            <div class="shelf-row ${isActive ? 'active' : ''}" data-level="${j}">
+                <div class="shelf-stones">${stonesHtml}</div>
+                <div class="shelf-line"></div>
+            </div>
+        `;
+    }
+    return shelvesHtml;
+}
+
 // Render Heaps on Game Board
 function renderBoard() {
     heapsContainer.innerHTML = '';
     
-    heaps.forEach((h, index) => {
+    // Check if heaps have been consolidated into 1 pile
+    if (heaps.length === 1 && gameState === 'playing') {
+        const h = heaps[0];
         const card = document.createElement('div');
-        card.className = `heap-card`;
+        card.className = `heap-card consolidated-heap-card`;
         
-        // Add styling for inactive/disabled heaps
-        if (gameState !== 'playing') {
-            card.classList.add('disabled');
-        } else if (currentTurn === 'player') {
-            if (h === 1) {
-                card.classList.add('size-1');
-            } else {
-                card.classList.add('interactive');
-            }
+        if (currentTurn === 'player' && h > 1) {
+            card.classList.add('interactive');
         }
-        
-        if (selectedHeapIndex === index) {
+        if (selectedHeapIndex === 0) {
             card.classList.add('selected');
         }
         
-        // Build 5 shelves for the heap visual container (each shelf always shows slots)
-        let shelvesHtml = '';
-        for (let k = 0; k < 5; k++) {
-            const capacity = Math.pow(2, k);
-            const isActive = (h & capacity) > 0;
-            
-            // Build the stone slots (filled or empty)
-            let stonesHtml = '';
-            for (let s = 0; s < capacity; s++) {
-                stonesHtml += `<div class="stone ${isActive ? 'filled' : 'empty'}"></div>`;
-            }
-            
-            shelvesHtml += `
-                <div class="shelf-row ${isActive ? 'active' : ''}" data-level="${k}">
-                    <div class="shelf-stones">${stonesHtml}</div>
-                    <div class="shelf-line"></div>
-                </div>
-            `;
-        }
+        // Decompose the single heap (max size 4096) into three columns:
+        // Col 1: bits 0-4 (1, 2, 4, 8, 16)
+        // Col 2: bits 5-8 (32, 64, 128, 256)
+        // Col 3: bits 9-12 (512, 1024, 2048, 4096)
+        const col1Html = buildColumnHtml(h, 0, 5, 1);
+        const col2Html = buildColumnHtml(h, 5, 4, 32);
+        const col3Html = buildColumnHtml(h, 9, 4, 512);
         
         card.innerHTML = `
             <div class="heap-header">
-                <div class="heap-title">Heap ${index + 1}</div>
+                <div class="heap-title"><i class="fa-solid fa-burst"></i> Consolidated Heap</div>
                 <div class="heap-size">${h}</div>
             </div>
-            <div class="heap-visual-container">
-                ${shelvesHtml}
+            <div class="consolidated-visual-grid">
+                <div class="visual-column" data-col="3">
+                    <div class="column-header">Col 3 (Unit 512)</div>
+                    <div class="heap-visual-container">${col3Html}</div>
+                </div>
+                <div class="visual-column" data-col="2">
+                    <div class="column-header">Col 2 (Unit 32)</div>
+                    <div class="heap-visual-container">${col2Html}</div>
+                </div>
+                <div class="visual-column" data-col="1">
+                    <div class="column-header">Col 1 (Unit 1)</div>
+                    <div class="heap-visual-container">${col1Html}</div>
+                </div>
             </div>
         `;
         
-        // Setup card click event
         card.addEventListener('click', () => {
             if (gameState !== 'playing' || currentTurn !== 'player' || h <= 1) return;
-            selectHeap(index);
+            selectHeap(0);
         });
         
         heapsContainer.appendChild(card);
-    });
+    } else {
+        // Standard multi-heap rendering
+        heaps.forEach((h, index) => {
+            const card = document.createElement('div');
+            card.className = `heap-card`;
+            
+            if (gameState !== 'playing') {
+                card.classList.add('disabled');
+            } else if (currentTurn === 'player') {
+                if (h === 1) {
+                    card.classList.add('size-1');
+                } else {
+                    card.classList.add('interactive');
+                }
+            }
+            
+            if (selectedHeapIndex === index) {
+                card.classList.add('selected');
+            }
+            
+            // Render standard Col 1 (levels 0-4)
+            const shelvesHtml = buildColumnHtml(h, 0, 5, 1);
+            
+            card.innerHTML = `
+                <div class="heap-header">
+                    <div class="heap-title">Heap ${index + 1}</div>
+                    <div class="heap-size">${h}</div>
+                </div>
+                <div class="heap-visual-container">
+                    ${shelvesHtml}
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                if (gameState !== 'playing' || currentTurn !== 'player' || h <= 1) return;
+                selectHeap(index);
+            });
+            
+            heapsContainer.appendChild(card);
+        });
+    }
 }
 
 // Select Heap
