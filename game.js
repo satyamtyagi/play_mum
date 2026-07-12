@@ -109,8 +109,8 @@ function logMessage(text, type = 'system') {
 }
 
 // Initialize heaps under the specific constraints:
-// - n in [2, 5]
-// - sizes in [2, 50]
+// - exactly 3 heaps
+// - sizes in [2, 31]
 // - no size divisible by m
 // - at least two heaps > m
 function generateHeaps(m) {
@@ -121,7 +121,7 @@ function generateHeaps(m) {
     for (let i = 0; i < 2; i++) {
         let size = 0;
         do {
-            size = Math.floor(Math.random() * (50 - (m + 1) + 1)) + (m + 1); // [m + 1, 50]
+            size = Math.floor(Math.random() * (31 - (m + 1) + 1)) + (m + 1); // [m + 1, 31]
         } while (size % m === 0);
         newHeaps.push(size);
     }
@@ -130,7 +130,7 @@ function generateHeaps(m) {
     for (let i = 2; i < numHeaps; i++) {
         let size = 0;
         do {
-            size = Math.floor(Math.random() * (50 - 2 + 1)) + 2; // [2, 50]
+            size = Math.floor(Math.random() * (31 - 2 + 1)) + 2; // [2, 31]
         } while (size % m === 0);
         newHeaps.push(size);
     }
@@ -245,15 +245,33 @@ function renderBoard() {
             card.classList.add('selected');
         }
         
+        // Build 5 shelves for the heap visual container (each shelf always shows slots)
+        let shelvesHtml = '';
+        for (let k = 0; k < 5; k++) {
+            const capacity = Math.pow(2, k);
+            const isActive = (h & capacity) > 0;
+            
+            // Build the stone slots (filled or empty)
+            let stonesHtml = '';
+            for (let s = 0; s < capacity; s++) {
+                stonesHtml += `<div class="stone ${isActive ? 'filled' : 'empty'}"></div>`;
+            }
+            
+            shelvesHtml += `
+                <div class="shelf-row ${isActive ? 'active' : ''}" data-level="${k}">
+                    <div class="shelf-stones">${stonesHtml}</div>
+                    <div class="shelf-line"></div>
+                </div>
+            `;
+        }
+        
         card.innerHTML = `
             <div class="heap-header">
                 <div class="heap-title">Heap ${index + 1}</div>
                 <div class="heap-size">${h}</div>
             </div>
             <div class="heap-visual-container">
-                <div class="heap-visual-battery ${selectedHeapIndex === index ? 'glow' : ''}">
-                    <div class="heap-visual-level" style="height: ${Math.min((h / 50) * 100, 100)}%;"></div>
-                </div>
+                ${shelvesHtml}
             </div>
         `;
         

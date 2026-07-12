@@ -431,8 +431,8 @@ body {
     background: rgba(255, 255, 255, 0.02);
     border: 2px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
-    width: 140px;
-    height: 280px;
+    width: 255px;
+    height: 330px;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -509,62 +509,140 @@ body {
     text-shadow: 0 0 15px var(--color-primary-glow);
 }
 
-/* Heap visual stacks (cylinders) */
+/* Heap visual stacks (binary shelves) */
 .heap-visual-container {
     flex-grow: 1;
     width: 100%;
     display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0.5rem 0 0 0;
+}
+
+.shelf-row {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.shelf-stones {
+    display: flex;
     justify-content: center;
     align-items: center;
-    margin: 1rem 0;
-}
-
-.heap-visual-battery {
-    width: 44px;
-    height: 150px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 22px;
-    background: rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    position: relative;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-    transition: all 0.3s ease;
-}
-
-.heap-visual-battery::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 20%;
-    width: 15%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.08);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.heap-visual-level {
+    flex-wrap: wrap;
+    gap: 2px;
+    min-height: 12px;
+    margin-bottom: 2px;
     width: 100%;
-    background: linear-gradient(180deg, var(--color-primary), #0056b3);
-    position: absolute;
-    bottom: 0;
-    transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0 0 15px var(--color-primary-glow);
 }
 
-.heap-card.selected .heap-visual-battery {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 15px var(--color-primary-glow), inset 0 0 10px rgba(0,0,0,0.5);
+.shelf-line {
+    width: var(--shelf-width, 100%);
+    height: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-.heap-card.selected .heap-visual-level {
-    background: linear-gradient(180deg, var(--color-primary), #00bfff);
+/* Shelf width adjustments for pyramid layout (halving at each higher level) */
+.shelf-row[data-level="0"] .shelf-line { --shelf-width: 5.625%; }
+.shelf-row[data-level="1"] .shelf-line { --shelf-width: 11.25%; }
+.shelf-row[data-level="2"] .shelf-line { --shelf-width: 22.5%; }
+.shelf-row[data-level="3"] .shelf-line { --shelf-width: 45%; }
+.shelf-row[data-level="4"] .shelf-line { --shelf-width: 90%; }
+
+.stone {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: stoneAppear 0.25s ease-out;
 }
 
-.heap-card.size-1 .heap-visual-level {
-    background: linear-gradient(180deg, #555, #222);
+/* Empty Slots Style */
+.stone.empty {
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+
+/* Colored Stones based on Level */
+.shelf-row[data-level="0"] .stone.filled {
+    background: radial-gradient(circle at 35% 35%, #fff9d6, #ffd700 60%, #b39200);
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.4), 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.shelf-row[data-level="1"] .stone.filled {
+    background: radial-gradient(circle at 35% 35%, #ffebe0, #ff7b00 60%, #b33c00);
+    box-shadow: 0 0 6px rgba(255, 123, 0, 0.4), 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.shelf-row[data-level="2"] .stone.filled {
+    background: radial-gradient(circle at 35% 35%, #ffe6f2, #ff007f 60%, #b3004f);
+    box-shadow: 0 0 6px rgba(255, 0, 127, 0.4), 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.shelf-row[data-level="3"] .stone.filled {
+    background: radial-gradient(circle at 35% 35%, #f3e6ff, #8a2be2 60%, #4b0082);
+    box-shadow: 0 0 6px rgba(138, 43, 226, 0.4), 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.shelf-row[data-level="4"] .stone.filled {
+    background: radial-gradient(circle at 35% 35%, #e0ffff, #00f2fe 60%, #0072ff);
+    box-shadow: 0 0 6px rgba(0, 242, 254, 0.4), 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.shelf-row.active .shelf-line {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.heap-card.selected .shelf-line {
+    background: rgba(0, 242, 254, 0.25);
+    box-shadow: 0 0 4px var(--color-primary-glow);
+}
+
+.heap-card.selected .shelf-row.active .shelf-line {
+    background: rgba(0, 242, 254, 0.7);
+    box-shadow: 0 0 6px var(--color-primary-glow);
+}
+
+/* Selected Glowing Colors per Level */
+.heap-card.selected .shelf-row[data-level="0"] .stone.filled {
+    box-shadow: 0 0 10px #ffd700, 0 1px 1px rgba(0,0,0,0.6);
+}
+
+.heap-card.selected .shelf-row[data-level="1"] .stone.filled {
+    box-shadow: 0 0 10px #ff7b00, 0 1px 1px rgba(0,0,0,0.6);
+}
+
+.heap-card.selected .shelf-row[data-level="2"] .stone.filled {
+    box-shadow: 0 0 10px #ff007f, 0 1px 1px rgba(0,0,0,0.6);
+}
+
+.heap-card.selected .shelf-row[data-level="3"] .stone.filled {
+    box-shadow: 0 0 10px #8a2be2, 0 1px 1px rgba(0,0,0,0.6);
+}
+
+.heap-card.selected .shelf-row[data-level="4"] .stone.filled {
+    box-shadow: 0 0 10px #00f2fe, 0 1px 1px rgba(0,0,0,0.6);
+}
+
+.heap-card.size-1 .stone.filled {
+    background: radial-gradient(circle at 35% 35%, #777777, #444444 65%, #1a1a1a);
     box-shadow: none;
+    opacity: 0.7;
+}
+
+.heap-card.size-1 .stone.empty {
+    opacity: 0.35;
+}
+
+@keyframes stoneAppear {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* Interaction control panel */
