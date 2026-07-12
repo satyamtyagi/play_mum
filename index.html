@@ -19,8 +19,25 @@
     <div class="container">
         <!-- App Header -->
         <header class="app-header">
-            <h1 class="logo-text">MuM</h1>
-            <p class="logo-sub">Multiplicative Modulo Nim</p>
+            <div class="header-logo">
+                <h1 class="logo-text">MuM</h1>
+                <p class="logo-sub">Multiplicative Modulo Nim</p>
+            </div>
+            
+            <div class="header-stats" id="header-stats-panel">
+                <div class="header-stat-card">
+                    <span class="header-stat-label"><i class="fa-solid fa-user-astronaut"></i> Turn</span>
+                    <span class="header-stat-value" id="turn-display">Waiting to start</span>
+                </div>
+                <div class="header-stat-card">
+                    <span class="header-stat-label"><i class="fa-solid fa-scale-balanced"></i> Invariant (<span class="math-symbol">P<sub>mod</sub></span>)</span>
+                    <span class="header-stat-value" id="invariant-display">--</span>
+                </div>
+                <div class="header-stat-card">
+                    <span class="header-stat-label"><i class="fa-solid fa-shield-halved"></i> State</span>
+                    <span class="header-stat-value state-badge" id="position-state-display">--</span>
+                </div>
+            </div>
         </header>
 
         <!-- Main Workspace -->
@@ -77,30 +94,11 @@
                     </div>
                 </div>
 
-                <!-- Stats / Invariant Panel -->
+                <!-- Live Logs Panel -->
                 <div class="panel glass-panel stats-panel">
-                    <h2 class="panel-title"><i class="fa-solid fa-chart-simple"></i> Live Analytics</h2>
-                    
-                    <div class="stat-row">
-                        <div class="stat-label">Current Turn</div>
-                        <div class="stat-value" id="turn-display">Waiting to start</div>
-                    </div>
-
-                    <div class="stat-row">
-                        <div class="stat-label">
-                            Multiplicative Invariant<br>
-                            <small class="math-formula">P<sub>mod</sub> = &prod; h<sub>i</sub> (mod m)</small>
-                        </div>
-                        <div class="stat-value invariant-value" id="invariant-display">--</div>
-                    </div>
-
-                    <div class="stat-row">
-                        <div class="stat-label">Position State</div>
-                        <div class="stat-value state-badge" id="position-state-display">--</div>
-                    </div>
-
-                    <div class="console-log" id="game-log">
-                        <div class="log-entry system">Click "Start New Game" to begin playing.</div>
+                    <h2 class="panel-title"><i class="fa-solid fa-terminal"></i> Live Logs</h2>
+                    <div class="console-log" id="game-log" style="height: 180px;">
+                        <div class="log-entry system">Click "Start Random/Custom Game" to begin playing.</div>
                     </div>
                 </div>
             </section>

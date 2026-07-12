@@ -87,28 +87,89 @@ body {
 
 /* Header */
 .app-header {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
     position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 1.25rem;
+}
+
+.header-logo {
+    text-align: left;
 }
 
 .logo-text {
     font-family: var(--font-header);
-    font-size: 3rem;
+    font-size: 2.75rem;
     font-weight: 900;
     letter-spacing: 4px;
     background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+    margin: 0;
 }
 
 .logo-sub {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--color-text-muted);
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-top: 0.25rem;
+    margin-bottom: 0;
+}
+
+/* Header Live Stats Cards */
+.header-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.header-stat-card {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.6rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    transition: all 0.25s ease;
+}
+
+.header-stat-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.header-stat-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.header-stat-label i {
+    color: var(--color-primary);
+    text-shadow: 0 0 6px var(--color-primary-glow);
+}
+
+.header-stat-value {
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Game Layout */
@@ -1053,6 +1114,23 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
+    .app-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .header-logo {
+        text-align: center;
+    }
+
+    .header-stats {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
     .game-layout {
         grid-template-columns: 1fr;
     }
