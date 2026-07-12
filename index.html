@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuM: Multiplicative Modulo Nim</title>
+    <!-- Google Fonts for futuristic math/gaming aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    
+    <div class="container">
+        <!-- App Header -->
+        <header class="app-header">
+            <h1 class="logo-text">MuM</h1>
+            <p class="logo-sub">Multiplicative Modulo Nim</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="game-layout">
+            <!-- Left Panel: Configuration and Stats -->
+            <section class="side-panel">
+                <!-- Config Panel -->
+                <div class="panel glass-panel config-panel">
+                    <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> Game Setup</h2>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Prime Modulus (<span class="math-symbol">m</span>)</label>
+                        <div class="prime-buttons" id="prime-selector">
+                            <button class="btn-prime active" data-val="5">5</button>
+                            <button class="btn-prime" data-val="3">3</button>
+                            <button class="btn-prime" data-val="7">7</button>
+                            <button class="btn-prime" data-val="11">11</button>
+                            <button class="btn-prime" data-val="13">13</button>
+                            <button class="btn-prime" data-val="17">17</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Who Goes First?</label>
+                        <div class="toggle-buttons" id="turn-selector">
+                            <button class="btn-toggle active" data-val="player"><i class="fa-solid fa-user"></i> Player</button>
+                            <button class="btn-toggle" data-val="ai"><i class="fa-solid fa-microchip"></i> AI</button>
+                        </div>
+                    </div>
+
+                    <button id="btn-start" class="btn-action btn-primary"><i class="fa-solid fa-play"></i> Start New Game</button>
+                </div>
+
+                <!-- Stats / Invariant Panel -->
+                <div class="panel glass-panel stats-panel">
+                    <h2 class="panel-title"><i class="fa-solid fa-chart-simple"></i> Live Analytics</h2>
+                    
+                    <div class="stat-row">
+                        <div class="stat-label">Current Turn</div>
+                        <div class="stat-value" id="turn-display">Waiting to start</div>
+                    </div>
+
+                    <div class="stat-row">
+                        <div class="stat-label">
+                            Multiplicative Invariant<br>
+                            <small class="math-formula">P<sub>mod</sub> = &prod; h<sub>i</sub> (mod m)</small>
+                        </div>
+                        <div class="stat-value invariant-value" id="invariant-display">--</div>
+                    </div>
+
+                    <div class="stat-row">
+                        <div class="stat-label">Position State</div>
+                        <div class="stat-value state-badge" id="position-state-display">--</div>
+                    </div>
+
+                    <div class="console-log" id="game-log">
+                        <div class="log-entry system">Click "Start New Game" to begin playing.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Game Board -->
+            <section class="board-panel">
+                <div class="panel glass-panel board-container">
+                    <div class="board-header">
+                        <h2 class="panel-title"><i class="fa-solid fa-gamepad"></i> Game Board</h2>
+                        <div class="game-actions">
+                            <button id="btn-restart" class="btn-secondary" disabled><i class="fa-solid fa-rotate-right"></i> Restart</button>
+                            <button id="btn-rules" class="btn-secondary"><i class="fa-solid fa-book-open"></i> Rules</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Heap Display -->
+                    <div class="heaps-wrapper" id="heaps-container">
+                        <div class="empty-board-message">
+                            <i class="fa-solid fa-circle-question info-icon"></i>
+                            <p>Configure the game and press Start to initialize the heaps.</p>
+                        </div>
+                    </div>
+
+                    <!-- Interaction Panel (Shown when player is choosing subtraction amount) -->
+                    <div class="interaction-control-panel hidden" id="move-panel">
+                        <h3 class="interaction-title">Heap <span id="selected-heap-num">1</span> Selected</h3>
+                        <p class="interaction-desc">Select how much to subtract (<span class="math-symbol">r</span>). Subtraction must satisfy: 1 &le; r &lt; m, r &lt; h<sub>i</sub>, and the result must not be divisible by m.</p>
+                        <div class="subtraction-buttons" id="subtraction-choices">
+                            <!-- Dynamically generated buttons for legal subtraction options -->
+                        </div>
+                        <div class="interaction-actions">
+                            <button id="btn-confirm-move" class="btn-action btn-confirm" disabled><i class="fa-solid fa-check"></i> Make Move</button>
+                            <button id="btn-cancel-move" class="btn-action btn-cancel"><i class="fa-solid fa-xmark"></i> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Rules Modal -->
+    <div class="modal-overlay hidden" id="rules-modal">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-book-open text-primary"></i> Rules of MuM</h2>
+                <button class="modal-close" id="btn-close-rules"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <h3>Game Elements</h3>
+                <ul>
+                    <li>The game is played with a prime modulus <span class="math-symbol">m</span> and <strong>2 to 5 heaps</strong>.</li>
+                    <li>No heap size can ever be divisible by <span class="math-symbol">m</span>.</li>
+                </ul>
+
+                <h3>Making a Move</h3>
+                <p>On your turn, choose a heap with size <span class="math-symbol">h<sub>i</sub> > 1</span> and subtract <span class="math-symbol">r</span> from it to replace it with <span class="math-symbol">h'<sub>i</sub> = h<sub>i</sub> - r</span>, subject to:</p>
+                <ol>
+                    <li><strong>Restricted subtraction:</strong> <span class="math-symbol">1 &le; r &lt; m</span> (you can subtract at most <span class="math-symbol">m - 1</span>).</li>
+                    <li><strong>No reduction to zero/below:</strong> <span class="math-symbol">r &lt; h<sub>i</sub></span> (heaps cannot be reduced to 0 or below, so h'<sub>i</sub> &ge; 1).</li>
+                    <li><strong>Divisibility constraint:</strong> The resulting size cannot be divisible by <span class="math-symbol">m</span> (i.e. <span class="math-symbol">h'<sub>i</sub> &not;&equiv; 0 (mod m)</span>).</li>
+                </ol>
+
+                <h3>Automatic Consolidation</h3>
+                <p>After a legal move, if <strong>all remaining heaps</strong> satisfy <span class="math-symbol">h<sub>i</sub> &lt; m</span>, they automatically merge into a <strong>single heap</strong> of size equal to the product of all heaps:</p>
+                <div class="formula-box">
+                    H = &prod; h<sub>i</sub>
+                </div>
+
+                <h3>How to Win</h3>
+                <ul>
+                    <li>The game ends when all heaps are equal to <strong>1</strong>.</li>
+                    <li>Since a heap of size 1 has no legal moves, the player whose turn it is loses (normal play convention). The last player to move wins!</li>
+                </ul>
+
+                <h3>Winning Invariant (&pi;-strategy)</h3>
+                <p>Calculate the product of all heaps modulo <span class="math-symbol">m</span>: <span class="math-symbol">P<sub>mod</sub> = &prod; h<sub>i</sub> (mod m)</span>.</p>
+                <ul>
+                    <li>If <span class="math-symbol">P<sub>mod</sub> &equiv; 1 (mod m)</span>, the position is <strong>losing (P-position)</strong>. Any move you make will leave a winning position for the opponent.</li>
+                    <li>If <span class="math-symbol">P<sub>mod</sub> &ne; 1 (mod m)</span>, the position is <strong>winning (N-position)</strong>. There is always a legal move that forces <span class="math-symbol">P<sub>mod</sub> &equiv; 1 (mod m)</span>, putting the opponent in a losing position!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Files -->
+    <script src="game.js"></script>
+</body>
+</html>
