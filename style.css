@@ -869,6 +869,31 @@ body {
 .text-warning {
 }
 
+/* OR Separator */
+.separator-text {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 1.25rem 0;
+}
+
+.separator-text::before,
+.separator-text::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.separator-text span {
+    padding: 0 0.5rem;
+    color: var(--color-text-muted);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
 /* Custom Heap Input Styles */
 .custom-heap-inputs {
     display: flex;

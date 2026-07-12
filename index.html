@@ -51,9 +51,15 @@
                         </div>
                     </div>
 
-                    <div class="control-group" id="custom-heaps-group">
+                    <div class="control-group" style="margin-bottom: 0.5rem;">
+                        <button id="btn-start-random" class="btn-action btn-primary"><i class="fa-solid fa-shuffle"></i> Start Random Game</button>
+                    </div>
+
+                    <div class="separator-text"><span>OR</span></div>
+
+                    <div class="control-group" id="custom-heaps-group" style="margin-top: 0.5rem;">
                         <label class="control-label">Custom Heap Sizes (1 - 31)</label>
-                        <div class="custom-heap-inputs">
+                        <div class="custom-heap-inputs" style="margin-bottom: 0.85rem;">
                             <div class="input-field-wrapper">
                                 <span class="input-prefix">H1</span>
                                 <input type="number" id="input-h1" min="1" max="31" value="12">
@@ -67,10 +73,6 @@
                                 <input type="number" id="input-h3" min="1" max="31" value="7">
                             </div>
                         </div>
-                    </div>
-
-                    <div class="start-buttons">
-                        <button id="btn-start-random" class="btn-action btn-primary" style="margin-bottom: 0.65rem;"><i class="fa-shuffle"></i> Start Random Game</button>
                         <button id="btn-start-custom" class="btn-action btn-secondary-action"><i class="fa-solid fa-gears"></i> Start Custom Game</button>
                     </div>
                 </div>
