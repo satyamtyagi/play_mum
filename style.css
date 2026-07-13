@@ -846,6 +846,18 @@ body {
     margin-bottom: 6px !important;
 }
 
+/* Width overrides for the shelf lines in Column 2 (Unit 32, 18px chips) */
+.visual-column[data-col="2"] .shelf-row[data-level="0"] .shelf-line { --shelf-width: 15% !important; }
+.visual-column[data-col="2"] .shelf-row[data-level="1"] .shelf-line { --shelf-width: 25% !important; }
+.visual-column[data-col="2"] .shelf-row[data-level="2"] .shelf-line { --shelf-width: 45% !important; }
+.visual-column[data-col="2"] .shelf-row[data-level="3"] .shelf-line { --shelf-width: 85% !important; }
+
+/* Width overrides for the shelf lines in Column 3 (Unit 512, 25px chips) */
+.visual-column[data-col="3"] .shelf-row[data-level="0"] .shelf-line { --shelf-width: 20% !important; }
+.visual-column[data-col="3"] .shelf-row[data-level="1"] .shelf-line { --shelf-width: 35% !important; }
+.visual-column[data-col="3"] .shelf-row[data-level="2"] .shelf-line { --shelf-width: 65% !important; }
+.visual-column[data-col="3"] .shelf-row[data-level="3"] .shelf-line { --shelf-width: 95% !important; }
+
 /* Interaction control panel */
 .interaction-control-panel {
     background: rgba(0, 0, 0, 0.4);
