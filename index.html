@@ -108,7 +108,13 @@
             <section class="board-panel">
                 <div class="panel glass-panel board-container">
                     <div class="board-header">
-                        <h2 class="panel-title"><i class="fa-solid fa-gamepad"></i> Game Board</h2>
+                        <div class="board-header-left">
+                            <h2 class="panel-title"><i class="fa-solid fa-gamepad"></i> Game Board</h2>
+                            <div class="display-mode-selector" id="display-mode-selector">
+                                <button class="toggle-mode-btn active" data-val="binary"><i class="fa-solid fa-cubes"></i> Binary</button>
+                                <button class="toggle-mode-btn" data-val="modular"><i class="fa-solid fa-calculator"></i> Modular</button>
+                            </div>
+                        </div>
                         <div class="game-actions">
                             <button id="btn-restart" class="btn-secondary" disabled><i class="fa-solid fa-rotate-right"></i> Restart</button>
                             <button id="btn-hint" class="btn-secondary" disabled><i class="fa-solid fa-lightbulb"></i> Hint</button>

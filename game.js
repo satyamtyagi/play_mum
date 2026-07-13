@@ -5,6 +5,7 @@ let currentTurn = 'player'; // 'player' or 'ai'
 let gameState = 'idle'; // 'idle', 'playing', 'ended'
 let selectedHeapIndex = null;
 let selectedSubtraction = null;
+let displayMode = 'binary'; // 'binary' or 'modular'
 
 // DOM Elements
 const primeSelector = document.getElementById('prime-selector');
@@ -80,6 +81,19 @@ btnCloseHint.addEventListener('click', () => hintModal.classList.add('hidden'));
 hintModal.addEventListener('click', (e) => {
     if (e.target === hintModal) hintModal.classList.add('hidden');
 });
+
+// Display Mode Selector (Binary / Modular Toggle)
+const displayModeSelector = document.getElementById('display-mode-selector');
+if (displayModeSelector) {
+    displayModeSelector.querySelectorAll('.toggle-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            displayModeSelector.querySelectorAll('.toggle-mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            displayMode = btn.getAttribute('data-val');
+            renderBoard();
+        });
+    });
+}
 
 // --- Game Logic Functions ---
 
@@ -264,6 +278,42 @@ function restartGame() {
     logMessage('Game reset. You can adjust setup settings and start again.', 'system');
 }
 
+// Helper to build modular representation HTML
+function buildModularHtml(h, prime, isConsolidated) {
+    const r = h % prime;
+    const q = Math.floor(h / prime);
+    
+    // Remainder row (standard size Gold/Amber pebbles)
+    let remStonesHtml = '';
+    for (let s = 0; s < r; s++) {
+        remStonesHtml += `<div class="stone mod-rem-stone filled"></div>`;
+    }
+    // Fill empty slots up to prime - 1
+    for (let s = r; s < prime - 1; s++) {
+        remStonesHtml += `<div class="stone mod-rem-stone empty"></div>`;
+    }
+    
+    // Prime groups row (wrapping chips of size 18px or 25px)
+    let groupStonesHtml = '';
+    for (let s = 0; s < q; s++) {
+        groupStonesHtml += `<div class="stone mod-group-chip filled"></div>`;
+    }
+    
+    return `
+        <div class="modular-view-container">
+            <div class="modular-row remainder">
+                <div class="modular-label">Remainder (r = ${r})</div>
+                <div class="remainder-row-stones">${remStonesHtml}</div>
+                <div class="remainder-line"></div>
+            </div>
+            <div class="modular-row groups">
+                <div class="modular-label">Prime Groups (q = ${q} &times; ${prime})</div>
+                <div class="modular-groups-area">${groupStonesHtml}</div>
+            </div>
+        </div>
+    `;
+}
+
 // Helper to build a column of shelves for binary representation
 function buildColumnHtml(h, startBit, numLevels, baseUnit) {
     let shelvesHtml = '';
@@ -305,34 +355,44 @@ function renderBoard() {
             card.classList.add('selected');
         }
         
-        // Decompose the single heap (max size 4096) into three columns:
-        // Col 1: bits 0-4 (1, 2, 4, 8, 16)
-        // Col 2: bits 5-8 (32, 64, 128, 256)
-        // Col 3: bits 9-12 (512, 1024, 2048, 4096)
-        const col1Html = buildColumnHtml(h, 0, 5, 1);
-        const col2Html = buildColumnHtml(h, 5, 4, 32);
-        const col3Html = buildColumnHtml(h, 9, 4, 512);
-        
-        card.innerHTML = `
-            <div class="heap-header">
-                <div class="heap-title"><i class="fa-solid fa-burst"></i> Consolidated Heap</div>
-                <div class="heap-size">${h}</div>
-            </div>
-            <div class="consolidated-visual-grid">
-                <div class="visual-column" data-col="1">
-                    <div class="column-header">Col 1 (Unit 1)</div>
-                    <div class="heap-visual-container">${col1Html}</div>
+        if (displayMode === 'modular') {
+            card.innerHTML = `
+                <div class="heap-header">
+                    <div class="heap-title"><i class="fa-solid fa-burst"></i> Consolidated Heap</div>
+                    <div class="heap-size">${h}</div>
                 </div>
-                <div class="visual-column" data-col="2">
-                    <div class="column-header">Col 2 (Unit 32)</div>
-                    <div class="heap-visual-container">${col2Html}</div>
+                ${buildModularHtml(h, primeModulus, true)}
+            `;
+        } else {
+            // Decompose the single heap (max size 4096) into three columns:
+            // Col 1: bits 0-4 (1, 2, 4, 8, 16)
+            // Col 2: bits 5-8 (32, 64, 128, 256)
+            // Col 3: bits 9-12 (512, 1024, 2048, 4096)
+            const col1Html = buildColumnHtml(h, 0, 5, 1);
+            const col2Html = buildColumnHtml(h, 5, 4, 32);
+            const col3Html = buildColumnHtml(h, 9, 4, 512);
+            
+            card.innerHTML = `
+                <div class="heap-header">
+                    <div class="heap-title"><i class="fa-solid fa-burst"></i> Consolidated Heap</div>
+                    <div class="heap-size">${h}</div>
                 </div>
-                <div class="visual-column" data-col="3">
-                    <div class="column-header">Col 3 (Unit 512)</div>
-                    <div class="heap-visual-container">${col3Html}</div>
+                <div class="consolidated-visual-grid">
+                    <div class="visual-column" data-col="1">
+                        <div class="column-header">Col 1 (Unit 1)</div>
+                        <div class="heap-visual-container">${col1Html}</div>
+                    </div>
+                    <div class="visual-column" data-col="2">
+                        <div class="column-header">Col 2 (Unit 32)</div>
+                        <div class="heap-visual-container">${col2Html}</div>
+                    </div>
+                    <div class="visual-column" data-col="3">
+                        <div class="column-header">Col 3 (Unit 512)</div>
+                        <div class="heap-visual-container">${col3Html}</div>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
         
         card.addEventListener('click', () => {
             if (gameState !== 'playing' || currentTurn !== 'player' || h <= 1) return;
@@ -360,18 +420,28 @@ function renderBoard() {
                 card.classList.add('selected');
             }
             
-            // Render standard Col 1 (levels 0-4)
-            const shelvesHtml = buildColumnHtml(h, 0, 5, 1);
-            
-            card.innerHTML = `
-                <div class="heap-header">
-                    <div class="heap-title">Heap ${index + 1}</div>
-                    <div class="heap-size">${h}</div>
-                </div>
-                <div class="heap-visual-container">
-                    ${shelvesHtml}
-                </div>
-            `;
+            if (displayMode === 'modular') {
+                card.innerHTML = `
+                    <div class="heap-header">
+                        <div class="heap-title">Heap ${index + 1}</div>
+                        <div class="heap-size">${h}</div>
+                    </div>
+                    ${buildModularHtml(h, primeModulus, false)}
+                `;
+            } else {
+                // Render standard Col 1 (levels 0-4)
+                const shelvesHtml = buildColumnHtml(h, 0, 5, 1);
+                
+                card.innerHTML = `
+                    <div class="heap-header">
+                        <div class="heap-title">Heap ${index + 1}</div>
+                        <div class="heap-size">${h}</div>
+                    </div>
+                    <div class="heap-visual-container">
+                        ${shelvesHtml}
+                    </div>
+                `;
+            }
             
             card.addEventListener('click', () => {
                 if (gameState !== 'playing' || currentTurn !== 'player' || h <= 1) return;

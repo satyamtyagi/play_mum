@@ -468,10 +468,53 @@ body {
     padding-bottom: 0.75rem;
 }
 
+.board-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .board-header .panel-title {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
+}
+
+/* Display Mode Toggle Buttons */
+.display-mode-selector {
+    display: flex;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.toggle-mode-btn {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.toggle-mode-btn:hover {
+    color: #fff;
+}
+
+.toggle-mode-btn.active {
+    background: var(--color-primary);
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+    font-weight: 700;
 }
 
 .game-actions {
@@ -857,6 +900,106 @@ body {
 .visual-column[data-col="3"] .shelf-row[data-level="1"] .shelf-line { --shelf-width: 35% !important; }
 .visual-column[data-col="3"] .shelf-row[data-level="2"] .shelf-line { --shelf-width: 65% !important; }
 .visual-column[data-col="3"] .shelf-row[data-level="3"] .shelf-line { --shelf-width: 95% !important; }
+
+/* Modular Display Mode Styles */
+.modular-view-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    flex-grow: 1;
+    justify-content: flex-start;
+    padding-top: 0.5rem;
+}
+
+.modular-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.modular-label {
+    font-family: var(--font-header);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
+}
+
+.remainder-row-stones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    min-height: 12px;
+    margin-bottom: 3px;
+    width: 100%;
+}
+
+.remainder-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent);
+    width: 60%;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.2);
+}
+
+.modular-groups-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    min-height: 40px;
+}
+
+/* Mod Mode Pebble Styles (inheriting level colors) */
+.stone.mod-rem-stone {
+    width: 11px;
+    height: 11px;
+}
+
+.stone.mod-rem-stone.filled {
+    background: radial-gradient(circle at 35% 35%, #fff9d6, #ffd700 60%, #b39200) !important;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Large Group chips (18px for standard cards, 25px for consolidated card) */
+.stone.mod-group-chip {
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50%;
+}
+
+.stone.mod-group-chip.empty {
+    border: 1.5px dashed rgba(255, 255, 255, 0.15) !important;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.stone.mod-group-chip.filled {
+    background: radial-gradient(circle at 35% 35%, #ffe6f2, #ff007f 60%, #b3004f) !important;
+    box-shadow: 0 0 8px rgba(255, 0, 127, 0.5), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
+}
+
+.heap-card.selected .stone.mod-group-chip.filled {
+    box-shadow: 0 0 12px #ff007f, 0 1px 1px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Consolidated Heap styling for Modular Mode (25px chips) */
+.consolidated-heap-card .stone.mod-group-chip {
+    width: 25px !important;
+    height: 25px !important;
+}
+
+.consolidated-heap-card .stone.mod-group-chip.filled {
+    box-shadow: 0 0 12px rgba(255, 0, 127, 0.6), 0 1px 1px rgba(0, 0, 0, 0.5) !important;
+}
 
 /* Interaction control panel */
 .interaction-control-panel {
